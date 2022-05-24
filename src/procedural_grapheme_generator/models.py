@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from operator import truediv
+import random
 
 
 class _NONTOTALISTIC(Enum):
@@ -35,7 +36,7 @@ class Board_base:
     def reshape(self, size_x, size_y):
         pass
 
-    def eval(self):
+    def step(self, rules: Rules):
         pass
 
 
