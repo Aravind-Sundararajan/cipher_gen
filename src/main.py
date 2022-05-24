@@ -35,8 +35,8 @@ class CipherMainWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = CipherMainWindow()
-    window.set_palette()
     window.app = app
+    window.set_palette()
     app.processEvents()
     time.sleep(0.1)
     window.show()
