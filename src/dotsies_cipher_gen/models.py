@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from operator import truediv
 
 
 class InvalidDimException(Exception):
@@ -7,7 +8,7 @@ class InvalidDimException(Exception):
 
 
 @dataclass(repr=True)
-class plaintext_base:
+class PlainText_base:
     size: int = 4
     text: str = "test"
 
@@ -23,22 +24,22 @@ class plaintext_base:
 
 
 @dataclass(repr=True)
-class plaintext_default:
+class PlainText_default:
     size: int = 4
     text: str = "test"
 
 
 @dataclass(repr=True)
-class plaintext(plaintext_base, plaintext_default):
+class PlainText(PlainText_base, PlainText_default):
     pass
 
 
 @dataclass(repr=True)
-class ciphertext_base:
-    size_x: int = 6
+class CipherText_base:
+    size_x: int = 5
     size_y: int = 1
-    matrix: list[list[int]] = field(
-        default_factory=lambda: [[0 for _ in range(5)]]
+    matrix: list[list[bool]] = field(
+        default_factory=lambda: [[bool(0) for _ in range(5)]]
     )
 
     def setMatrix(self, m):
@@ -54,11 +55,36 @@ class ciphertext_base:
 
         self.size_x = sx
         self.size_y = sy
+    
+    def circShift(self):
+        pass
+
+    def invert(self):
+        pass
+
+    def rotateRow(self, rid: int, dir: bool):
+        pass
+
+    def rotateColumn(self, rid: int, dir: bool):
+        pass
+
+    def union(self, b):
+        pass
+
+    def intersection(self, b):
+        pass
+
+    def complement(self, b):
+        pass
+
+    def isValid(self) -> bool:
+        if len(self.matrix[0]) == 5:
+            return True
 
 
 @dataclass(repr=True)
-class ciphertext_default:
-    size_x: int = 6
+class CipherText_default:
+    size_x: int = 5
     size_y: int = 1
     matrix: list[list[int]] = field(
         default_factory=lambda: [[0 for _ in range(5)]]
@@ -66,5 +92,5 @@ class ciphertext_default:
 
 
 @dataclass(repr=True)
-class ciphertext(ciphertext_base, ciphertext_default):
+class CipherText(CipherText_base, CipherText_default):
     pass
