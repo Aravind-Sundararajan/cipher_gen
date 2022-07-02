@@ -2,7 +2,6 @@ import sys, os
 sys.path.insert(0, os.path.abspath('./base'))
 from dataclasses import dataclass, field
 from base import Matrix, Matrix_base, Matrix_default
-
 @dataclass(repr=True)
 class PlainText_base:
     size: int = 4
@@ -33,8 +32,8 @@ class PlainText(PlainText_base, PlainText_default):
 @dataclass(repr=True)
 class CipherText_base(Matrix_base):
     shape: tuple[int] = (1,5)
-    state: list[bool] = field(
-        default_factory=list[bool]
+    state: tuple[bool] = field(
+        default_factory=tuple[bool]
     )
     def setMatrix(self, m):
         self.state = m
@@ -76,14 +75,14 @@ class CipherText_base(Matrix_base):
 @dataclass(repr=True)
 class CipherText_default(Matrix_default):
     shape: tuple[int] = (1,1)
-    state: list[bool] = field(
-        default_factory=list[bool]
+    state: tuple[bool] = field(
+        default_factory=tuple[bool]
     )
 
 
 @dataclass(repr=True)
 class CipherText(CipherText_base, CipherText_default):
     def __post_init__(self):
-        self.state = [bool(0) for j in range(self.shape[0]*self.shape[1])]
+        self.state = tuple([bool(0)]*(self.shape[0]*self.shape[1]))
     def __repr__(self):
         return self.prettyPrint()

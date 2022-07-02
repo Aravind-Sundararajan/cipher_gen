@@ -13,8 +13,8 @@ class InvalidIndexException(Exception):
 @dataclass(repr=True)
 class Matrix_base:
     shape: tuple[int] = (1,5)
-    state: list[bool] = field(
-        default_factory=lambda: [bool(0) for _ in range(5)]
+    state: tuple[bool] = field(
+        default_factory=lambda: tuple([bool(0) for _ in range(5)])
     )
 
     def __call__(self,pos):
@@ -55,8 +55,8 @@ class Matrix_base:
 @dataclass
 class Matrix_default:
     shape: tuple[int] = (1,1)
-    state: list[bool] = field(
-        default_factory=list[bool]
+    state: tuple[bool] = field(
+        default_factory=tuple[bool]
     )
 
 @dataclass

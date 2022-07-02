@@ -40,7 +40,7 @@ class Board_default(Matrix_default):
 @dataclass
 class Board(Board_base, Board_default):
     def __post_init__(self):
-        self.state = [bool(0) for j in range(self.shape[0]*self.shape[1])]
+        self.state = tuple([bool(0) for j in range(self.shape[0]*self.shape[1])])
     def __repr__(self):
         return self.prettyPrint()
 
