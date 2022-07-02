@@ -2,7 +2,7 @@ from models import Board
 from matplotlib import pyplot as plt
 
 
-class visualizer:
+class Visualizer:
     def __init__(self):
         pass
 

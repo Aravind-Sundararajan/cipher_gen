@@ -1,23 +1,23 @@
+import sys, os
+sys.path.insert(0, os.path.abspath('./base'))
 from dataclasses import dataclass, field
 from enum import Enum
 from operator import truediv
 import random
 
-
-class _NONTOTALISTIC(Enum):
-    "c"
+from base import Matrix_base, Matrix_default
 
 
 @dataclass
 class Rules_default:
-    born: list = [3]
-    survive: list = [2, 3]
+    born: list[int] = field(default_factory=lambda:[3]) 
+    survive: list[int] = field(default_factory=lambda:[2, 3]) 
 
 
 @dataclass
 class Rules_base:
-    born: list = [3]
-    survive: list = [2, 3]
+    born: list[int] = field(default_factory=lambda:[3]) 
+    survive: list[int] = field(default_factory=lambda:[2, 3]) 
 
 
 @dataclass
@@ -26,29 +26,25 @@ class Rules(Rules_base, Rules_default):
 
 
 @dataclass
-class Board_base:
-    size_x: int = 8
-    size_y: int = 8
-    matrix: list[list[int]] = field(
-        default_factory=lambda: [[0 for i in range(8)] for j in range(8)]
-    )
-
-    def reshape(self, size_x, size_y):
-        pass
+class Board_base(Matrix_base):
 
     def step(self, rules: Rules):
         pass
 
 
 @dataclass
-class Board_default:
-    size_x: int = 8
-    size_y: int = 8
-    matrix: list[list[int]] = field(
-        default_factory=lambda: [[0 for i in range(8)] for j in range(8)]
-    )
+class Board_default(Matrix_default):
+    pass
 
 
 @dataclass
 class Board(Board_base, Board_default):
-    pass
+    def __post_init__(self):
+        self.state = [bool(0) for j in range(self.shape[0]*self.shape[1])]
+    def __repr__(self):
+        return self.prettyPrint()
+
+# b = Board(shape = (8,8))
+# b[1,2]=True
+# print(b)
+# print(b[0,0])

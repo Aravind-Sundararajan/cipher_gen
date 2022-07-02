@@ -1,11 +1,7 @@
+import sys, os
+sys.path.insert(0, os.path.abspath('./base'))
 from dataclasses import dataclass, field
-from operator import truediv
-
-
-class InvalidDimException(Exception):
-    def __init__(self, n1, n2):
-        self.message = f"{n1}!={n2}"
-
+from base import Matrix, Matrix_base, Matrix_default
 
 @dataclass(repr=True)
 class PlainText_base:
@@ -31,42 +27,38 @@ class PlainText_default:
 
 @dataclass(repr=True)
 class PlainText(PlainText_base, PlainText_default):
-    pass
-
+    def __post_init__(self):
+        self.size = len(self.text)
 
 @dataclass(repr=True)
-class CipherText_base:
-    size_x: int = 5
-    size_y: int = 1
-    matrix: list[list[bool]] = field(
-        default_factory=lambda: [[bool(0) for _ in range(5)]]
+class CipherText_base(Matrix_base):
+    shape: tuple[int] = (1,5)
+    state: list[bool] = field(
+        default_factory=list[bool]
     )
-
     def setMatrix(self, m):
-        self.matrix = m
+        self.state = m
 
-    def reshape(self, sx, sy):
-        a1 = self.size_x * self.size_y
-        a2 = sx * sy
-        if a1 == a2:
-            pass  # FIXME
-        else:
-            raise InvalidDimException(a1, a2)
-
-        self.size_x = sx
-        self.size_y = sy
-    
-    def circShift(self):
-        pass
+    def circShift(self,n: int):
+        n = n % len(self.state)
+        self.state = self.state[n:] + self.state[:n]
 
     def invert(self):
-        pass
+        self.state = [not elem for elem in self.state]
 
     def rotateRow(self, rid: int, dir: bool):
-        pass
+        ids = list(range(rid*self.shape[1], rid*self.shape[1] + self.shape[0]))
+        temp = self.state[ids]
+        direction =  2*int(dir)-1
+        temp = temp[direction:] + temp[:direction]
+        self.state[ids] = temp
 
-    def rotateColumn(self, rid: int, dir: bool):
-        pass
+    def rotateColumn(self, cid: int, dir: bool):
+        ids = list(range(cid, self.shape[0]*self.shape[1], self.shape[0]))
+        temp = self.state[ids]
+        direction =  2*int(dir)-1
+        temp = temp[direction:] + temp[:direction]
+        self.state[ids] = temp
 
     def union(self, b):
         pass
@@ -78,19 +70,20 @@ class CipherText_base:
         pass
 
     def isValid(self) -> bool:
-        if len(self.matrix[0]) == 5:
-            return True
+        pass
 
 
 @dataclass(repr=True)
-class CipherText_default:
-    size_x: int = 5
-    size_y: int = 1
-    matrix: list[list[int]] = field(
-        default_factory=lambda: [[0 for _ in range(5)]]
+class CipherText_default(Matrix_default):
+    shape: tuple[int] = (1,1)
+    state: list[bool] = field(
+        default_factory=list[bool]
     )
 
 
 @dataclass(repr=True)
 class CipherText(CipherText_base, CipherText_default):
-    pass
+    def __post_init__(self):
+        self.state = [bool(0) for j in range(self.shape[0]*self.shape[1])]
+    def __repr__(self):
+        return self.prettyPrint()

@@ -2,7 +2,7 @@ from models import Board, Rules
 import random
 
 
-class generator:
+class Generator:
     def __init__(self):
         pass
 
