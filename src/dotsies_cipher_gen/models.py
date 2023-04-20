@@ -1,88 +1,91 @@
-import sys, os
-sys.path.insert(0, os.path.abspath('./base'))
 from dataclasses import dataclass, field
-from base import Matrix, Matrix_base, Matrix_default
-@dataclass(repr=True)
-class PlainText_base:
+from typing import List, Tuple
+
+
+@dataclass
+class PlainText:
     size: int = 4
     text: str = "test"
 
-    def setText(self, t):
-        self.size = len(t)
-        self.text = t
-
-    def getText(self) -> str:
-        return self.text
-
-    def getSize(self) -> int:
-        return self.size
-
-
-@dataclass(repr=True)
-class PlainText_default:
-    size: int = 4
-    text: str = "test"
-
-
-@dataclass(repr=True)
-class PlainText(PlainText_base, PlainText_default):
     def __post_init__(self):
         self.size = len(self.text)
 
-@dataclass(repr=True)
-class CipherText_base(Matrix_base):
-    shape: tuple[int] = (1,5)
-    state: tuple[bool] = field(
-        default_factory=tuple[bool]
-    )
-    def setMatrix(self, m):
-        self.state = m
+    def set_text(self, text: str):
+        self.size = len(text)
+        self.text = text
 
-    def circShift(self,n: int):
+    def get_text(self) -> str:
+        return self.text
+
+    def get_size(self) -> int:
+        return self.size
+
+
+@dataclass
+class CipherText:
+    shape: Tuple[int, int] = (1, 1)
+    state: Tuple[bool, ...] = field(default_factory=lambda: (False,))
+
+    def __post_init__(self):
+        self.state = tuple([False] * (self.shape[0] * self.shape[1]))
+
+    def set_matrix(self, matrix: List[List[bool]]):
+        self.state = tuple(sum(matrix, []))
+
+    def circ_shift(self, n: int):
         n = n % len(self.state)
         self.state = self.state[n:] + self.state[:n]
 
     def invert(self):
         self.state = [not elem for elem in self.state]
 
-    def rotateRow(self, rid: int, dir: bool):
-        ids = list(range(rid*self.shape[1], rid*self.shape[1] + self.shape[0]))
-        temp = self.state[ids]
-        direction =  2*int(dir)-1
-        temp = temp[direction:] + temp[:direction]
-        self.state[ids] = temp
+    def rotate_row(self, row_id: int, direction: bool):
+        row_start = row_id * self.shape[1]
+        row_end = row_start + self.shape[1]
+        temp = list(self.state[row_start:row_end])
+        shift = 1 if direction else -1
+        temp = temp[shift:] + temp[:shift]
+        self.state = self.state[:row_start] + tuple(temp) + self.state[row_end:]
 
-    def rotateColumn(self, cid: int, dir: bool):
-        ids = list(range(cid, self.shape[0]*self.shape[1], self.shape[0]))
-        temp = self.state[ids]
-        direction =  2*int(dir)-1
-        temp = temp[direction:] + temp[:direction]
-        self.state[ids] = temp
+    def rotate_column(self, col_id: int, direction: bool):
+        temp = []
+        for i in range(self.shape[0]):
+            temp.append(self.state[col_id + i * self.shape[1]])
+        shift = 1 if direction else -1
+        temp = temp[shift:] + temp[:shift]
+        for i in range(self.shape[0]):
+            self.state[col_id + i * self.shape[1]] = temp[i]
 
-    def union(self, b):
+    def union(self, other):
+        if self.shape != other.shape:
+            raise ValueError("Matrices must have the same shape to be unioned")
+        
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                self.state[i * self.shape[1] + j] = self.state[i * self.shape[1] + j] | other.state[i * self.shape[1] + j]
+
+    def intersection(self, other):
+        if self.shape != other.shape:
+            raise ValueError("Matrices must have the same shape to be intersected")
+        
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                self.state[i * self.shape[1] + j] = self.state[i * self.shape[1] + j] & other.state[i * self.shape[1] + j]
+
+    def complement(self, other):
         pass
 
-    def intersection(self, b):
-        pass
-
-    def complement(self, b):
-        pass
-
-    def isValid(self) -> bool:
+    def is_valid(self) -> bool:
         pass
 
 
-@dataclass(repr=True)
-class CipherText_default(Matrix_default):
-    shape: tuple[int] = (1,1)
-    state: tuple[bool] = field(
-        default_factory=tuple[bool]
-    )
+@dataclass
+class Rules:
+    born: List[int] = field(default_factory=lambda: [3])
+    survive: List[int] = field(default_factory=lambda: [2, 3])
 
 
-@dataclass(repr=True)
-class CipherText(CipherText_base, CipherText_default):
-    def __post_init__(self):
-        self.state = tuple([bool(0)]*(self.shape[0]*self.shape[1]))
-    def __repr__(self):
-        return self.prettyPrint()
+@dataclass
+class Board(Matrix):
+    def step(self, rules: Rules):
+        pass

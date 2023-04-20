@@ -1,15 +1,14 @@
-import os
-import sys, os
 from procedural_grapheme_generator.models import Board
 from dotsies_cipher_gen.models import CipherText
 
 
 class Board2CipherTextAdapter:
-    def convert(self, b: Board) -> CipherText:
-        c = CipherText(size_x = b.size_x, size_y = b.size_y, state=b.state)
-        return c
+    @staticmethod
+    def convert(board: Board) -> CipherText:
+        return CipherText(size_x=board.size_x, size_y=board.size_y, state=board.state)
+
 
 class CipherText2BoardAdapter:
-    def convert(self, b: CipherText) -> Board:
-        c = Board(size_x = b.size_x, size_y = b.size_y, state=b.state)
-        return c
+    @staticmethod
+    def convert(cipher_text: CipherText) -> Board:
+        return Board(size_x=cipher_text.size_x, size_y=cipher_text.size_y, state=cipher_text.state)

@@ -1,13 +1,14 @@
 from models import Board
-from matplotlib import pyplot as plt
+
+import matplotlib.pyplot as plt
 
 
 class Visualizer:
     def __init__(self):
         pass
 
-    def show(self, board: Board):
-        fig = plt.figure(figsize=(10, 10))
-        ax = plt.axes()
+    def show(self, board: Board) -> None:
+        fig, ax = plt.subplots(figsize=(10, 10))
         ax.set_axis_off()
         ax.imshow(board.matrix, interpolation="none", cmap="RdPu")
+        plt.show()
